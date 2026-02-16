@@ -22,29 +22,29 @@ Name: AppSync Unified
 Package: com.lucy.jsim
 Version: 1.0
 Architecture: iphoneos-arm
-Maintainer: Auto IPA Converter
-Depends: firmware (>= 1.0), ldid
+Maintainer: slutvibe <alexa.chern22@gmail.com>
+Depends: firmware (>= 1.0), firmware (<< 13.0), ldid
 Filename: debs/JobSimulatorGame2017.deb
-Size: 32584180
-MD5sum: 9110e7dbed6c3724075334dc99566453
-SHA1: ea1d7fba7ed737b22f5c8800d576523ad69d8fbd
-SHA256: 4b5ba00e640e8eda13ace1ac661c0ff474a1bdde69d9d9c79d509a6d4542b57c
+Size: 32584462
+MD5sum: b5925d8c43fe3468f8743fe38c7c1e8f
+SHA1: 929031907079c5a80a2e9311cde0f2683a42aedf
+SHA256: 4a3e9c60c2e6f4a8734993f656962b98723b508e11951cc645a7162054a9e73d
 Section: App
-Description: Autoconverted from IPA
+Description: Autoconverted from IPA. Requires iOS 12 or below.
 Name: Job Sim
 
 Package: com.thefalcoinitiative.slidetounlock
 Version: 2.2.5
 Architecture: iphoneos-arm
-Maintainer: Auto IPA Converter
-Depends: firmware (>= 1.0), ldid
+Maintainer: slutvibe <alexa.chern22@gmail.com>
+Depends: firmware (>= 1.0), firmware (<< 13.0), ldid
 Filename: debs/Slide_2.2.5.deb
-Size: 8266574
-MD5sum: dfd1eb3e35280b03f8ad3c2baad79774
-SHA1: 1350ff19da5b17741be10a46637cfc9d2250911d
-SHA256: c9cdd9eb978c3c71bf7ca1ec13feee636fef0d11430fd362fcac29f0b8b7b1e5
+Size: 8266846
+MD5sum: d6cc9abf28d43f2355ec091b02186f00
+SHA1: f2e173aa6aeee533a0d1b7fe03935ff6617b07ff
+SHA256: a0ec412e4201442715754d9399e8fe09135defd118f02233f8d68a18b98ae6a5
 Section: App
-Description: Autoconverted from IPA
+Description: Autoconverted from IPA. Requires iOS 12 or below.
 Name: Slide
 
 Package: ldid
@@ -62,18 +62,4 @@ Section: Development
 Priority: optional
 Description: pseudo-codesign Mach-O files
 Author: Jay Freeman (saurik) <saurik@saurik.com>
-
-Package: org.amnezia.awg
-Version: 2.0.0
-Architecture: iphoneos-arm
-Maintainer: Auto IPA Converter
-Depends: firmware (>= 1.0), ldid
-Filename: debs/org.amnezia.awg-2.0.0-eeveedecrypter.deb
-Size: 12545114
-MD5sum: 893eb2bd09950785084cb5a06fd8b84c
-SHA1: 502aaacef474e9f7ddf7af1add6512116111d230
-SHA256: 798cfb4077f54fa2d591dacfd80dc5be86eb7486fa53681718364db68d98b3a7
-Section: App
-Description: Autoconverted from IPA
-Name: AmneziaWG
 

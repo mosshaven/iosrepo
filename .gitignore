@@ -1,5 +1,2 @@
-update.sh
-convert.sh
 input/
 *.processed
-converter/

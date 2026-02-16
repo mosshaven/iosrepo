@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <title>MossHaven Repo</title>
+    <title>slutvibe Repo</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
@@ -26,47 +26,82 @@
     <div class="container">
         <img src="CydiaIcon.png" alt="Icon" class="icon">
         
-        <h1>MossHaven</h1>
-        <p>Personal Tweak Collection for iOS 12</p>
+        <h1>slutvibe</h1>
+        <p>Персональный репозиторий для iOS 12 и ниже</p>
 
-        <a class="btn" href="sileo://source/https://fragmentmusic.xyz/">ADD TO SILEO</a>
+        <a class="btn" href="sileo://source/https://fragmentmusic.xyz/">ДОБАВИТЬ В SILEO</a>
 
         <div id="tweak-list">
-            <div style="text-align:center; padding: 10px;">Загрузка списка твиков...</div>
+            <div style="text-align:center; padding: 10px;">Загрузка пакетов...</div>
         </div>
 
         <div class="contact">
-            Developed by <a href="https://t.me/slutvibe">@slutvibe</a>
+            Разработчик: <a href="https://t.me/slutvibe">@slutvibe</a>
         </div>
     </div>
 
     <script>
-        // Скрипт парсит файл Packages и выводит список
+        // Скрипт парсит файл Packages и группирует по категориям
         fetch('Packages')
             .then(response => response.text())
             .then(data => {
-                const list = document.getElementById('tweak-list');
-                list.innerHTML = '<h3 style="text-align:center; margin-top:0;">Available Tweaks:</h3>';
+                const container = document.getElementById('tweak-list');
+                container.innerHTML = '';
                 
                 const packages = data.split('\n\n');
+                const categories = {};
+                
                 packages.forEach(pkg => {
                     const name = pkg.match(/^Name: (.*)$/m);
                     const desc = pkg.match(/^Description: (.*)$/m);
                     const vers = pkg.match(/^Version: (.*)$/m);
+                    const sect = pkg.match(/^Section: (.*)$/m);
                     
                     if (name) {
-                        const item = document.createElement('div');
-                        item.className = 'tweak-item';
-                        item.innerHTML = `
-                            <span class="tweak-name">${name[1]} <small style="color:#666">(${vers ? vers[1] : ''})</small></span>
-                            <span class="tweak-desc">${desc ? desc[1] : 'No description provided.'}</span>
-                        `;
-                        list.appendChild(item);
+                        const section = sect ? sect[1] : 'Other';
+                        if (!categories[section]) {
+                            categories[section] = [];
+                        }
+                        categories[section].push({
+                            name: name[1],
+                            desc: desc ? desc[1] : 'Описание отсутствует.',
+                            version: vers ? vers[1] : ''
+                        });
                     }
                 });
+                
+                // Создаем секции для каждой категории
+                const categoryNames = {
+                    'App': 'Приложения',
+                    'Tweaks': 'Твики',
+                    'Other': 'Другое'
+                };
+                
+                Object.keys(categories).forEach(category => {
+                    if (categories[category].length > 0) {
+                        const sectionDiv = document.createElement('div');
+                        sectionDiv.innerHTML = `<h4 style="color:var(--main-yellow); margin-top:20px; text-align:left;">${categoryNames[category] || category}:</h4>`;
+                        
+                        categories[category].forEach(pkg => {
+                            const item = document.createElement('div');
+                            item.className = 'tweak-item';
+                            item.innerHTML = `
+                                <span class="tweak-name">${pkg.name} <small style="color:#666">(${pkg.version})</small></span>
+                                <span class="tweak-desc">${pkg.desc}</span>
+                            `;
+                            sectionDiv.appendChild(item);
+                        });
+                        
+                        container.appendChild(sectionDiv);
+                    }
+                });
+                
+                if (Object.keys(categories).length === 0) {
+                    container.innerHTML = '<div style="text-align:center; padding: 10px;">Пакеты не найдены.</div>';
+                }
             })
             .catch(err => {
-                document.getElementById('tweak-list').innerHTML = "Failed to load tweaks.";
+                document.getElementById('tweak-list').innerHTML = '<div style="text-align:center; padding: 10px;">Не удалось загрузить пакеты.</div>';
             });
     </script>
 </body>

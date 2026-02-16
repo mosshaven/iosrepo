@@ -23,13 +23,13 @@ Package: com.lucy.jsim
 Version: 1.0
 Architecture: iphoneos-arm
 Maintainer: Auto IPA Converter
-Depends: firmware (>= 1.0)
+Depends: firmware (>= 1.0), ldid
 Filename: debs/JobSimulatorGame2017.deb
-Size: 32583852
-MD5sum: 9bb9c316f5daf338b0e96dd49a70fc4f
-SHA1: 29052fab20af81ce5ddd6272b586fd1280f8ece9
-SHA256: 881ce3190818752fb09273b296136113e7fd5b5cf8be4ae543745408bdf73a1f
-Section: Other
+Size: 32583916
+MD5sum: 59427923cf0ecc9d403376e6a83a8f60
+SHA1: f828af076989f12f66e1e32aac5b22223d3e80b2
+SHA256: dfdc9f20aff1af37f57ec1321fdae6bb35fa4f6bca86d73fad042af17688d9e0
+Section: App
 Description: Autoconverted from IPA
 Name: Job Sim
 
@@ -37,27 +37,43 @@ Package: com.thefalcoinitiative.slidetounlock
 Version: 2.2.5
 Architecture: iphoneos-arm
 Maintainer: Auto IPA Converter
-Depends: firmware (>= 1.0)
+Depends: firmware (>= 1.0), ldid
 Filename: debs/Slide_2.2.5.deb
-Size: 8266222
-MD5sum: 6ab1b19458fee1f99b376bf81076ceff
-SHA1: a576f1c378c1966e5a9af14658f877620fc30a59
-SHA256: b4b4c1f1effb8ef974396697b2587608eb33f289e09df0d850dc6f91914e8c07
-Section: Other
+Size: 8266298
+MD5sum: 535d6c800f140b89229d9be9fdc32453
+SHA1: 58b5d9819ceff76acf12eaa35c8b033192339a19
+SHA256: a9eae920234531451be66d0985e57932cfa1d4b619a537030a72dfdfcf8a9f02
+Section: App
 Description: Autoconverted from IPA
 Name: Slide
+
+Package: ldid
+Version: 2.1.5-procursus7
+Architecture: iphoneos-arm
+Maintainer: Procursus Team <support@procurs.us>
+Installed-Size: 236
+Depends: libiosexec1 (>= 1.2.2), libssl3, libplist3 (>= 2.2.0)
+Filename: debs/ldid_2.1.5-procursus7_iphoneos-arm.deb
+Size: 72498
+MD5sum: c2d7d27b154df53a2ce34ed47c378565
+SHA1: 7bd1a7c6ab79f9df931e8768d7199d563b3f9618
+SHA256: 0ff838697e2916333a48676346aaa5563c95bac809db807ec416cb7393c7761f
+Section: Development
+Priority: optional
+Description: pseudo-codesign Mach-O files
+Author: Jay Freeman (saurik) <saurik@saurik.com>
 
 Package: org.amnezia.awg
 Version: 2.0.0
 Architecture: iphoneos-arm
 Maintainer: Auto IPA Converter
-Depends: firmware (>= 1.0)
+Depends: firmware (>= 1.0), ldid
 Filename: debs/org.amnezia.awg-2.0.0-eeveedecrypter.deb
-Size: 12544780
-MD5sum: 3753e14372237b3a72946589a84e20aa
-SHA1: 6f6171cd32c3abfb9f8d60daf862780bfc31d2ac
-SHA256: 446ecd7dc5553314fb8abd15438142c63347caa2456cccf77d424c10be444f1f
-Section: Other
+Size: 12544850
+MD5sum: 101006cb52231b2a6f0c6e680687b156
+SHA1: 202e65ac8e907f572744a17631304d6a8a72b58a
+SHA256: 8dc7b66cf819ac81c75e6f4d255b03a2a65ead8b9af23ba09638bcab0dc32049
+Section: App
 Description: Autoconverted from IPA
 Name: AmneziaWG
 

@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Конвертер IPA в DEB (FIXED VERSION)
+# i2d: IPA to DEB Converter (iOS 12 & below optimized)
 set -e
 
 # Цвета
-RED='\033[0;31m'
 GREEN='\033[0;32m'
+RED='\033[0;31m'
 NC='\033[0m'
 
 print_status() { echo -e "${GREEN}[INFO]${NC} $1"; }
@@ -18,150 +18,98 @@ fi
 
 INPUT_IPA="$1"
 OUTPUT_DEB="${2:-$(basename "$INPUT_IPA" .ipa).deb}"
-
-if [ ! -f "$INPUT_IPA" ]; then
-    print_error "Input file not found!"
-    exit 1
-fi
-
 TEMP_DIR=$(mktemp -d)
 trap "rm -rf $TEMP_DIR" EXIT
 
-print_status "Extracting IPA..."
+print_status "Распаковка IPA..."
 unzip -q "$INPUT_IPA" -d "$TEMP_DIR"
 
 PAYLOAD_DIR="$TEMP_DIR/Payload"
 APP_BUNDLE=$(find "$PAYLOAD_DIR" -name "*.app" -type d | head -n 1)
-
-if [ -z "$APP_BUNDLE" ]; then
-    print_error "No .app bundle found!"
-    exit 1
-fi
-
-APP_DIR_NAME=$(basename "$APP_BUNDLE")
 INFO_PLIST="$APP_BUNDLE/Info.plist"
 export INFO_PLIST
 
-# --- СБОР ИНФОРМАЦИИ ЧЕРЕЗ PYTHON ---
-
-# 1. Bundle ID
-BUNDLE_ID=$(python3 - << 'PY'
-import os, plistlib, sys
+# Собираем данные через Python (чтобы не упасть на бинарных plist)
+APP_DATA=$(python3 - << 'PY'
+import os, plistlib
 try:
     with open(os.environ['INFO_PLIST'], 'rb') as f:
         pl = plistlib.load(f)
     print(pl.get('CFBundleIdentifier', 'com.unknown.app'))
-except: print('com.unknown.app')
-PY
-)
-
-# 2. Display Name
-DISPLAY_NAME=$(python3 - << 'PY'
-import os, plistlib
-try:
-    with open(os.environ['INFO_PLIST'], 'rb') as f:
-        pl = plistlib.load(f)
-    print(pl.get('CFBundleDisplayName') or pl.get('CFBundleName') or 'Unknown')
-except: print('Unknown')
-PY
-)
-
-# 3. Version
-APP_VERSION=$(python3 - << 'PY'
-import os, plistlib
-try:
-    with open(os.environ['INFO_PLIST'], 'rb') as f:
-        pl = plistlib.load(f)
+    print(pl.get('CFBundleDisplayName') or pl.get('CFBundleName') or 'App')
     print(pl.get('CFBundleShortVersionString') or pl.get('CFBundleVersion') or '1.0')
-except: print('1.0')
-PY
-)
-
-# 4. Executable Name (САМОЕ ВАЖНОЕ!)
-EXECUTABLE_NAME=$(python3 - << 'PY'
-import os, plistlib
-try:
-    with open(os.environ['INFO_PLIST'], 'rb') as f:
-        pl = plistlib.load(f)
     print(pl.get('CFBundleExecutable', ''))
-except: print('')
+    print(pl.get('MinimumOSVersion', 'Неизвестно'))
+except:
+    print("com.unknown\nApp\n1.0\n\nНеизвестно")
 PY
 )
 
-if [ -z "$EXECUTABLE_NAME" ]; then
-    # Если в plist нет имени, берем имя папки без .app
-    EXECUTABLE_NAME=$(echo "$APP_DIR_NAME" | sed 's/\.app$//')
+BUNDLE_ID=$(echo "$APP_DATA" | sed -n '1p')
+DISPLAY_NAME=$(echo "$APP_DATA" | sed -n '2p')
+APP_VERSION=$(echo "$APP_DATA" | sed -n '3p')
+EXEC_NAME=$(echo "$APP_DATA" | sed -n '4p')
+MIN_OS=$(echo "$APP_DATA" | sed -n '5p')
+
+if [ -z "$EXEC_NAME" ]; then
+    EXEC_NAME=$(basename "$APP_BUNDLE" .app)
 fi
 
-print_status "App: $DISPLAY_NAME ($BUNDLE_ID)"
-print_status "Executable binary: $EXECUTABLE_NAME"
-
-# --- СБОРКА ПАКЕТА ---
-
-# Создаем правильную структуру сразу для /Applications
+# Подготовка структуры
 DEB_DIR="$TEMP_DIR/deb"
 mkdir -p "$DEB_DIR/DEBIAN"
 mkdir -p "$DEB_DIR/Applications"
 
-# Копируем .app сразу в Applications
+print_status "Копирование файлов..."
 cp -r "$APP_BUNDLE" "$DEB_DIR/Applications/"
 
-# Создаем control
+# Ищем иконку для Sileo (берем покрупнее)
+ICON_FILE=$(find "$APP_BUNDLE" -maxdepth 1 -name "*60x60@2x.png" -o -name "*AppIcon*" -o -name "Icon-60.png" | head -n 1)
+if [ -n "$ICON_FILE" ]; then
+    cp "$ICON_FILE" "$DEB_DIR/icon.png"
+    ICON_LINE="Icon: /icon.png"
+else
+    ICON_LINE=""
+fi
+
+# Создание control
 cat > "$DEB_DIR/DEBIAN/control" << EOF
 Package: $BUNDLE_ID
 Name: $DISPLAY_NAME
 Version: $APP_VERSION
 Architecture: iphoneos-arm
-Description: Converted from IPA via script.
+Description: Мин. версия ОС: $MIN_OS и выше.
+ Авто-конвертировано через i2d.
+ $ICON_LINE
 Maintainer: slutvibe <alexa.chern22@gmail.com>
-Section: Games
-Depends: firmware (>= 1.0), ldid
+Section: Applications
+Depends: firmware (>= 7.0), ldid
 EOF
 
-# --- СОЗДАНИЕ POSTINST ---
-# Важно: Мы используем EOF без кавычек, чтобы подставить переменные BASH сейчас,
-# но экранируем \$ для переменных, которые должны работать внутри iOS.
-
+# Создание postinst
 cat > "$DEB_DIR/DEBIAN/postinst" << EOF
 #!/bin/bash
+APP_PATH="/Applications/$(basename "$APP_BUNDLE")"
+BIN_PATH="\$APP_PATH/$EXEC_NAME"
 
-APP_PATH="/Applications/$APP_DIR_NAME"
-BIN_PATH="/Applications/$APP_DIR_NAME/$EXECUTABLE_NAME"
-
-echo "Setting permissions for $DISPLAY_NAME..."
-
-# 1. Исправляем владельца
+echo "Настройка прав для $DISPLAY_NAME..."
 chown -R root:wheel "\$APP_PATH"
+chmod -R 755 "\$APP_PATH"
 
-# 2. Делаем бинарник исполняемым (ЭТОГО НЕ ХВАТАЛО)
 if [ -f "\$BIN_PATH" ]; then
-    chmod 755 "\$BIN_PATH"
-    echo "Signing binary: \$BIN_PATH"
-    
-    # 3. Подписываем ldid
-    ldid -S "\$BIN_PATH" 2>/dev/null || echo "Warning: ldid failed or not found"
-else
-    echo "Error: Binary not found at \$BIN_PATH"
+    echo "Подпись бинарника..."
+    ldid -S "\$BIN_PATH" 2>/dev/null || true
 fi
 
-# 4. Обновляем иконки
+echo "Обновление кэша иконок..."
 uicache -p "\$APP_PATH"
 exit 0
 EOF
 
 chmod 755 "$DEB_DIR/DEBIAN/postinst"
 
-# --- СОЗДАНИЕ PRERM ---
-cat > "$DEB_DIR/DEBIAN/prerm" << EOF
-#!/bin/bash
-# Ничего удалять не надо, dpkg сам удалит папку /Applications/$APP_DIR_NAME
-# Нам нужно только почистить кэш
-exit 0
-EOF
-chmod 755 "$DEB_DIR/DEBIAN/prerm"
-
 # Сборка
-print_status "Building DEB..."
+print_status "Сборка DEB пакета..."
 dpkg-deb -Zgzip -b "$DEB_DIR" "$OUTPUT_DEB"
 
-print_status "Done: $OUTPUT_DEB"
+print_status "Готово! Пакет: $OUTPUT_DEB"

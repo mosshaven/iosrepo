@@ -23,14 +23,16 @@ Package: com.lucy.jsim
 Version: 1.0
 Architecture: iphoneos-arm
 Maintainer: slutvibe <alexa.chern22@gmail.com>
-Depends: firmware (>= 1.0), ldid
+Depends: firmware (>= 7.0), ldid
 Filename: debs/JobSimulatorGame2017.deb
-Size: 32583812
-MD5sum: 10906c6a3f09d515a5de28c328e47eb2
-SHA1: b615cc97568d8cadec214d012af4caa628118bac
-SHA256: d3931d31f8396f9a0d6868bc47b93993d8b1a240c8605638934b03c158c3403a
-Section: Games
-Description: Converted from IPA via script.
+Size: 32666956
+MD5sum: cc4ac20ae6f2d55eca0ffed1c2e71d1c
+SHA1: 25c236e6f1888f0fff22d36597f5948317ee2d74
+SHA256: 263477096c2b34095061a6e4aafddcfe4afdf3f1a6f30ce56b8a3a7034cf3d05
+Section: Applications
+Description: Мин. версия ОС: 7.0 и выше.
+ Авто-конвертировано через i2d.
+ Icon: /icon.png
 Name: Job Sim
 
 Package: com.thefalcoinitiative.slidetounlock

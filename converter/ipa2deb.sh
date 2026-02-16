@@ -3,7 +3,6 @@
 # i2d: IPA to DEB Converter (iOS 12 & below optimized)
 set -e
 
-# Цвета
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
@@ -29,7 +28,7 @@ APP_BUNDLE=$(find "$PAYLOAD_DIR" -name "*.app" -type d | head -n 1)
 INFO_PLIST="$APP_BUNDLE/Info.plist"
 export INFO_PLIST
 
-# Собираем данные через Python (чтобы не упасть на бинарных plist)
+# Собираем данные
 APP_DATA=$(python3 - << 'PY'
 import os, plistlib
 try:
@@ -40,8 +39,12 @@ try:
     print(pl.get('CFBundleShortVersionString') or pl.get('CFBundleVersion') or '1.0')
     print(pl.get('CFBundleExecutable', ''))
     print(pl.get('MinimumOSVersion', 'Неизвестно'))
+    # Проверка на игру
+    is_game = 'game' in str(pl.get('LSApplicationCategoryType', '')).lower() or \
+              'Games' in str(pl.get('UIRequiredDeviceCapabilities', ''))
+    print('Games' if is_game else 'Applications')
 except:
-    print("com.unknown\nApp\n1.0\n\nНеизвестно")
+    print("com.unknown\nApp\n1.0\n\nНеизвестно\nApplications")
 PY
 )
 
@@ -50,6 +53,7 @@ DISPLAY_NAME=$(echo "$APP_DATA" | sed -n '2p')
 APP_VERSION=$(echo "$APP_DATA" | sed -n '3p')
 EXEC_NAME=$(echo "$APP_DATA" | sed -n '4p')
 MIN_OS=$(echo "$APP_DATA" | sed -n '5p')
+SECTION=$(echo "$APP_DATA" | sed -n '6p')
 
 if [ -z "$EXEC_NAME" ]; then
     EXEC_NAME=$(basename "$APP_BUNDLE" .app)
@@ -63,13 +67,13 @@ mkdir -p "$DEB_DIR/Applications"
 print_status "Копирование файлов..."
 cp -r "$APP_BUNDLE" "$DEB_DIR/Applications/"
 
-# Ищем иконку для Sileo (берем покрупнее)
+# Ищем иконку только для того, чтобы положить её в корень (Sileo подцепит сам через поле Icon)
 ICON_FILE=$(find "$APP_BUNDLE" -maxdepth 1 -name "*60x60@2x.png" -o -name "*AppIcon*" -o -name "Icon-60.png" | head -n 1)
 if [ -n "$ICON_FILE" ]; then
     cp "$ICON_FILE" "$DEB_DIR/icon.png"
-    ICON_LINE="Icon: /icon.png"
+    ICON_FIELD="Icon: /icon.png"
 else
-    ICON_LINE=""
+    ICON_FIELD=""
 fi
 
 # Создание control
@@ -78,11 +82,10 @@ Package: $BUNDLE_ID
 Name: $DISPLAY_NAME
 Version: $APP_VERSION
 Architecture: iphoneos-arm
-Description: Мин. версия ОС: $MIN_OS и выше.
- Авто-конвертировано через i2d.
- $ICON_LINE
+Description: Мин. версия ОС: $MIN_OS. Авто-конвертировано через i2d.
 Maintainer: slutvibe <alexa.chern22@gmail.com>
-Section: Applications
+Section: $SECTION
+$ICON_FIELD
 Depends: firmware (>= 7.0), ldid
 EOF
 
@@ -109,7 +112,7 @@ EOF
 chmod 755 "$DEB_DIR/DEBIAN/postinst"
 
 # Сборка
-print_status "Сборка DEB пакета..."
+print_status "Сборка DEB пакета в раздел $SECTION..."
 dpkg-deb -Zgzip -b "$DEB_DIR" "$OUTPUT_DEB"
 
 print_status "Готово! Пакет: $OUTPUT_DEB"

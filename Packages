@@ -19,45 +19,45 @@ Author: Karen/あけみ, Linus Yang <karen@akemi.ai>
 Depiction: https://cydia.akemi.ai/?page/ai.akemi.appsyncunified
 Name: AppSync Unified
 
-Package: amneziawg
+Package: com.lucy.jsim
 Version: 1.0
 Architecture: iphoneos-arm
-Maintainer: IPA2DEB Converter
-Depends: firmware (>= 1.0)
-Filename: debs/org.amnezia.awg-2.0.0-eeveedecrypter.deb
-Size: 9620646
-MD5sum: 259b448587e6d36d2b39f9e606a901f8
-SHA1: be3f1ca21beab754ebed51fcb3c12acebe0e6dd6
-SHA256: 5b95c04c5206164d69e6ba198542684ad0d2c7b2cd8cee1263d74666352eb2bf
-Section: Utilities
-Description: Converted from input/org.amnezia.awg-2.0.0-eeveedecrypter.ipa
-Name: AmneziaWG.app
-
-Package: productname
-Version: 1.0
-Architecture: iphoneos-arm
-Maintainer: IPA2DEB Converter
+Maintainer: Auto IPA Converter
 Depends: firmware (>= 1.0)
 Filename: debs/JobSimulatorGame2017.deb
-Size: 26047988
-MD5sum: 37f390f8ea32e9d4d6eabd5d8fec6a7d
-SHA1: d5a8b7605525e645a5c6f3a036ec99112829ad1d
-SHA256: de118fb45dc8927e550671873ce8acf06d3a4073f86443047401067aea72087f
-Section: Utilities
-Description: Converted from input/JobSimulatorGame2017.ipa
-Name: ProductName.app
+Size: 32583828
+MD5sum: 57758c574023029ae875ee1c28b4186e
+SHA1: e84de6de5362444af60001818336bc1c518259ca
+SHA256: 7708b725a74e0acb6d49e63a0c1132255b8cba03e5f58f99f1ff3f9bcaf51dd3
+Section: Other
+Description: Autoconverted from IPA
+Name: Job Sim
 
-Package: slide
-Version: 1.0
+Package: com.thefalcoinitiative.slidetounlock
+Version: 2.2.5
 Architecture: iphoneos-arm
-Maintainer: IPA2DEB Converter
+Maintainer: Auto IPA Converter
 Depends: firmware (>= 1.0)
 Filename: debs/Slide_2.2.5.deb
-Size: 7397714
-MD5sum: cc512b8100de4ddea49a5e80b80b0ea3
-SHA1: 8c49ab3b7a5478f6453bdb710d1010f56c5fbe03
-SHA256: dd033c8225187dd4053d9aae4ba9ed99dc2d570336313023b5d6d4c8add7a215
-Section: Utilities
-Description: Converted from input/Slide_2.2.5.ipa
-Name: Slide.app
+Size: 8266238
+MD5sum: a1636e4b2b3d96bc9db89f82b27f853a
+SHA1: 9cc0e7f80be8df1543a56732e55d3c30fa4c600f
+SHA256: 9587f1e9f9ab6709fff3dad133767a98ebdd5918e8e78c55a1f3008c87fbc817
+Section: Other
+Description: Autoconverted from IPA
+Name: Slide
+
+Package: org.amnezia.awg
+Version: 2.0.0
+Architecture: iphoneos-arm
+Maintainer: Auto IPA Converter
+Depends: firmware (>= 1.0)
+Filename: debs/org.amnezia.awg-2.0.0-eeveedecrypter.deb
+Size: 12544782
+MD5sum: fde5f95286d8a95ca10932867473ac37
+SHA1: 265a513792f5e3b72f8608fa99f644e5df69c716
+SHA256: 57f461470c482061128948d29074476a027836361b41f218152cfe02d0107a59
+Section: Other
+Description: Autoconverted from IPA
+Name: AmneziaWG
 

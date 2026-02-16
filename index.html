@@ -1,1 +1,73 @@
-<h1>hey!</h1>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>MossHaven Repo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        :root { --main-yellow: #f1c40f; --dark-bg: #1a1a1a; }
+        body { background: var(--dark-bg); color: #eee; font-family: -apple-system, sans-serif; text-align: center; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 { color: var(--main-yellow); font-size: 2.5em; text-transform: uppercase; letter-spacing: 2px; }
+        .icon { width: 150px; height: 150px; border-radius: 30px; border: 4px solid var(--main-yellow); margin-bottom: 20px; }
+        .btn { background: var(--main-yellow); color: black; padding: 15px 30px; border-radius: 50px; text-decoration: none; font-weight: bold; display: inline-block; margin: 10px; transition: 0.3s; }
+        .btn:hover { transform: scale(1.05); background: #fff; }
+        .contact { margin-top: 30px; font-size: 0.9em; opacity: 0.7; }
+        .contact a { color: var(--main-yellow); text-decoration: none; }
+        
+        #tweak-list { text-align: left; background: #222; border-radius: 15px; padding: 10px; margin-top: 30px; border: 1px solid #333; }
+        .tweak-item { padding: 10px; border-bottom: 1px solid #333; }
+        .tweak-item:last-child { border-bottom: none; }
+        .tweak-name { color: var(--main-yellow); font-weight: bold; display: block; }
+        .tweak-desc { font-size: 0.85em; color: #aaa; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="CydiaIcon.png" alt="Icon" class="icon">
+        
+        <h1>MossHaven</h1>
+        <p>Personal Tweak Collection for iOS 12</p>
+
+        <a class="btn" href="sileo://source/https://fragmentmusic.xyz/">ADD TO SILEO</a>
+
+        <div id="tweak-list">
+            <div style="text-align:center; padding: 10px;">Загрузка списка твиков...</div>
+        </div>
+
+        <div class="contact">
+            Developed by <a href="https://t.me/slutvibe">@slutvibe</a>
+        </div>
+    </div>
+
+    <script>
+        // Скрипт парсит файл Packages и выводит список
+        fetch('Packages')
+            .then(response => response.text())
+            .then(data => {
+                const list = document.getElementById('tweak-list');
+                list.innerHTML = '<h3 style="text-align:center; margin-top:0;">Available Tweaks:</h3>';
+                
+                const packages = data.split('\n\n');
+                packages.forEach(pkg => {
+                    const name = pkg.match(/^Name: (.*)$/m);
+                    const desc = pkg.match(/^Description: (.*)$/m);
+                    const vers = pkg.match(/^Version: (.*)$/m);
+                    
+                    if (name) {
+                        const item = document.createElement('div');
+                        item.className = 'tweak-item';
+                        item.innerHTML = `
+                            <span class="tweak-name">${name[1]} <small style="color:#666">(${vers ? vers[1] : ''})</small></span>
+                            <span class="tweak-desc">${desc ? desc[1] : 'No description provided.'}</span>
+                        `;
+                        list.appendChild(item);
+                    }
+                });
+            })
+            .catch(err => {
+                document.getElementById('tweak-list').innerHTML = "Failed to load tweaks.";
+            });
+    </script>
+</body>
+</html>

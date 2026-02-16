@@ -1,5 +1,5 @@
-#update.sh
-#convert.sh
-#input/
-#*.processed
-#converter/
+update.sh
+convert.sh
+input/
+*.processed
+converter/

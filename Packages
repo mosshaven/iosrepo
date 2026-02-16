@@ -19,3 +19,17 @@ Author: Karen/あけみ, Linus Yang <karen@akemi.ai>
 Depiction: https://cydia.akemi.ai/?page/ai.akemi.appsyncunified
 Name: AppSync Unified
 
+Package: com.slut.jobsim
+Version: 1.0
+Architecture: iphoneos-arm
+Maintainer: slut <alexa.chern22@gmail.com>
+Filename: debs/JobSimulator.deb
+Size: 26045678
+MD5sum: 4f95caf655422c0e16832635718e7aeb
+SHA1: 24d85ef368f0f7a462328901ce6cd8148208b651
+SHA256: 0d19c0effa2b3c634d61b9319e0bd85fe2535df9abf1a98e294d1d647ffb26e7
+Section: Games
+Description: idk what is this
+Author: @slutvibe
+Name: Job Simulator 2017
+

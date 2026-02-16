@@ -6,158 +6,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         :root { --main-yellow: #f1c40f; --dark-bg: #0d0d0d; --card-bg: #1c1c1e; }
-        body { background: var(--dark-bg); color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; }
-        
+        body { background: var(--dark-bg); color: #fff; font-family: -apple-system, sans-serif; margin: 0; padding: 20px; }
         .container { max-width: 800px; margin: 0 auto; }
-        
-        /* Header */
-        h1 { color: var(--main-yellow); font-size: 2.8em; margin-bottom: 5px; letter-spacing: -1px; }
-        .repo-desc { opacity: 0.6; margin-bottom: 30px; }
-        
-        /* Кнопка */
-        .btn { background: var(--main-yellow); color: #000; padding: 14px 25px; border-radius: 12px; text-decoration: none; font-weight: 700; display: inline-block; transition: 0.2s; border: none; cursor: pointer; }
-        .btn:hover { transform: scale(0.98); opacity: 0.9; }
+        h1 { color: var(--main-yellow); font-size: 2.8em; margin-bottom: 5px; }
+        .btn { background: var(--main-yellow); color: #000; padding: 14px 25px; border-radius: 12px; text-decoration: none; font-weight: 700; display: inline-block; cursor: pointer; }
+        h4 { text-align: left; margin: 30px 0 15px; color: var(--main-yellow); border-bottom: 1px solid #333; }
+        .package-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
+        .tweak-item { background: var(--card-bg); padding: 15px; border-radius: 18px; text-align: center; cursor: pointer; border: 1px solid #2c2c2e; transition: 0.2s; }
+        .tweak-item:hover { transform: translateY(-3px); background: #222; }
+        .tweak-icon { width: 64px; height: 64px; border-radius: 14px; margin-bottom: 10px; background: #333; }
+        .tweak-name { font-weight: 600; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* Категории и Сетка */
-        h4 { text-align: left; margin: 30px 0 15px; font-size: 1.2em; color: var(--main-yellow); border-bottom: 1px solid #333; padding-bottom: 5px; }
-        .package-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-
-        /* Карточка пакета */
-        .tweak-item { background: var(--card-bg); padding: 15px; border-radius: 18px; text-align: center; cursor: pointer; transition: 0.2s; border: 1px solid #2c2c2e; }
-        .tweak-item:hover { background: #2c2c2e; transform: translateY(-3px); }
-        .tweak-icon { width: 60px; height: 60px; border-radius: 14px; background: #333; margin-bottom: 10px; object-fit: cover; }
-        .tweak-name { font-weight: 600; font-size: 0.95em; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .tweak-ver { font-size: 0.8em; opacity: 0.5; }
-
-        /* Модальное окно (Sileo Style) */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card-bg); width: 90%; max-width: 450px; border-radius: 25px; padding: 25px; position: relative; animation: slideUp 0.3s ease; text-align: left; border: 1px solid #333; }
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
+        /* Модалка */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-content { background: var(--card-bg); width: 90%; max-width: 450px; border-radius: 25px; padding: 25px; position: relative; border: 1px solid #333; }
         .modal-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .modal-header img { width: 80px; height: 80px; border-radius: 18px; border: 1px solid #333; }
-        .modal-title-grp h2 { margin: 0; font-size: 1.4em; }
-        .modal-title-grp p { margin: 0; opacity: 0.5; font-size: 0.9em; }
-
-        .modal-body { line-height: 1.5; color: #ccc; margin-bottom: 20px; font-size: 0.95em; }
-        .modal-footer { border-top: 1px solid #333; padding-top: 15px; display: flex; justify-content: space-between; font-size: 0.8em; opacity: 0.6; }
-        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; opacity: 0.5; }
-
-        .contact { margin-top: 50px; font-size: 0.8em; opacity: 0.4; }
-        .contact a { color: var(--main-yellow); text-decoration: none; }
+        .modal-header img { width: 70px; height: 70px; border-radius: 15px; }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; opacity: 0.5; }
     </style>
 </head>
 <body>
-
     <div class="container">
         <h1>slutvibe</h1>
-        <p class="repo-desc">iOS 12 & Below Legacy Repo</p>
-
+        <p style="opacity:0.6">Personal Legacy Repo</p>
         <a class="btn" href="sileo://source/https://fragmentmusic.xyz/">ДОБАВИТЬ В SILEO</a>
-
-        <div id="repo-content">
-            <div style="padding: 40px; opacity: 0.5;">Чтение Packages...</div>
-        </div>
-
-        <div class="contact">
-            Created by <a href="https://t.me/slutvibe">@slutvibe</a>
-        </div>
+        <div id="repo-content"></div>
     </div>
 
-    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal-overlay" id="modalOverlay" onclick="this.style.display='none'">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <span class="close-btn" onclick="toggleModal(false)">&times;</span>
+            <span class="close-btn" onclick="document.getElementById('modalOverlay').style.display='none'">&times;</span>
             <div id="modalData"></div>
         </div>
     </div>
 
     <script>
-        const repoContent = document.getElementById('repo-content');
-        const modalOverlay = document.getElementById('modalOverlay');
-        const modalData = document.getElementById('modalData');
-
-        function toggleModal(show) {
-            modalOverlay.style.display = show ? 'flex' : 'none';
-        }
-
-        function closeModal(e) { toggleModal(false); }
-
-        function showDetail(pkg) {
-            modalData.innerHTML = `
-                <div class="modal-header">
-                    <img src="${pkg.icon}" onerror="this.src='CydiaIcon.png'">
-                    <div class="modal-title-grp">
-                        <h2>${pkg.name}</h2>
-                        <p>${pkg.id}</p>
-                    </div>
-                </div>
-                <div class="modal-body">
-                    ${pkg.desc.replace(/\n/g, '<br>')}
-                </div>
-                <div class="modal-footer">
-                    <span>Версия: ${pkg.version}</span>
-                    <span>Секция: ${pkg.section}</span>
-                </div>
-                <div style="margin-top:20px; text-align:center;">
-                    <a href="sileo://package/${pkg.id}" class="btn" style="width:100%; box-sizing:border-box;">ОТКРЫТЬ В SILEO</a>
-                </div>
-            `;
-            toggleModal(true);
-        }
-
         fetch('Packages')
             .then(res => res.text())
             .then(data => {
-                repoContent.innerHTML = '';
+                const content = document.getElementById('repo-content');
                 const packages = data.split('\n\n');
                 const categories = {};
 
                 packages.forEach(block => {
-                    const getField = (f) => {
-                        const m = block.match(new RegExp(`^${f}: (.*)$`, 'm'));
-                        return m ? m[1] : null;
-                    };
-
-                    const name = getField('Name');
+                    const get = (f) => (block.match(new RegExp(`^${f}: (.*)$`, 'm')) || [])[1];
+                    const name = get('Name');
                     if (!name) return;
 
-                    const pkg = {
-                        name: name,
-                        id: getField('Package'),
-                        version: getField('Version'),
-                        desc: getField('Description') || 'Нет описания',
-                        section: getField('Section') || 'Other',
-                        icon: getField('Icon') || 'CydiaIcon.png'
-                    };
-
+                    const pkg = { name, id: get('Package'), version: get('Version'), desc: get('Description'), section: get('Section'), icon: get('Icon') || 'CydiaIcon.png' };
                     if (!categories[pkg.section]) categories[pkg.section] = [];
                     categories[pkg.section].push(pkg);
                 });
 
-                Object.keys(categories).forEach(cat => {
-                    const sectionHtml = document.createElement('div');
-                    sectionHtml.innerHTML = `<h4>${cat}</h4>`;
-                    const grid = document.createElement('div');
-                    grid.className = 'package-grid';
-
-                    categories[cat].forEach(pkg => {
-                        const item = document.createElement('div');
-                        item.className = 'tweak-item';
-                        item.onclick = () => showDetail(pkg);
-                        item.innerHTML = `
-                            <img class="tweak-icon" src="${pkg.icon}" onerror="this.src='CydiaIcon.png'">
-                            <span class="tweak-name">${pkg.name}</span>
-                            <span class="tweak-ver">${pkg.version}</span>
-                        `;
-                        grid.appendChild(item);
+                for (const [cat, pkgs] of Object.entries(categories)) {
+                    const h4 = document.createElement('h4'); h4.innerText = cat;
+                    const grid = document.createElement('div'); grid.className = 'package-grid';
+                    pkgs.forEach(pkg => {
+                        const div = document.createElement('div');
+                        div.className = 'tweak-item';
+                        div.innerHTML = `<img class="tweak-icon" src="${pkg.icon}" onerror="this.src='CydiaIcon.png'"><span class="tweak-name">${pkg.name}</span>`;
+                        div.onclick = () => {
+                            document.getElementById('modalData').innerHTML = `
+                                <div class="modal-header">
+                                    <img src="${pkg.icon}" onerror="this.src='CydiaIcon.png'">
+                                    <div><h3>${pkg.name}</h3><p style="opacity:0.5;margin:0">${pkg.id}</p></div>
+                                </div>
+                                <p>${pkg.desc}</p>
+                                <p style="font-size:0.8em;opacity:0.5">Версия: ${pkg.version}</p>
+                                <a href="sileo://package/${pkg.id}" class="btn" style="width:100%;text-align:center;box-sizing:border-box">ОТКРЫТЬ В SILEO</a>
+                            `;
+                            document.getElementById('modalOverlay').style.display = 'flex';
+                        };
+                        grid.appendChild(div);
                     });
-
-                    sectionHtml.appendChild(grid);
-                    repoContent.appendChild(sectionHtml);
-                });
-            })
-            .catch(() => {
-                repoContent.innerHTML = 'Ошибка загрузки репозитория.';
+                    content.appendChild(h4); content.appendChild(grid);
+                }
             });
     </script>
 </body>

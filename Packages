@@ -25,10 +25,10 @@ Architecture: iphoneos-arm
 Maintainer: slutvibe <alexa.chern22@gmail.com>
 Depends: firmware (>= 7.0), ldid
 Filename: debs/JobSimulatorGame2017.deb
-Size: 32662346
-MD5sum: 05c9df1e1a60f36c5bc201bb5765ec75
-SHA1: 7f4843fac4cd7a6b0afd342b2e8772d9c07922d1
-SHA256: 03f16660a58b9cfa848523191cc625a84702e756e82a559807e86cac653cdc20
+Size: 32662240
+MD5sum: 90b4706fa434c2e9882d1233bbf445a9
+SHA1: d90d57831995a0c5c9040194a16edad10c676ca5
+SHA256: 2bbf215e7706bd09864d1a15069895004742ab46bdac4003b89e68c8a91be802
 Section: Applications
 Description: Мин. ОС: 7.0. Авто-конверт i2d.
 Icon: icons/com.lucy.jsim.png

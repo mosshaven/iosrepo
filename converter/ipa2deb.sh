@@ -208,11 +208,11 @@ if [ -n "$APP_DIR" ]; then
     chown -R root:wheel "$TARGET_DIR"
     chmod -R 755 "$TARGET_DIR"
     
-    # Подпись исполняемого файла через ldid (поиск динамически)
+    # Sign the app executable with ldid (find it dynamically)
     EXECUTABLE=$(find "$TARGET_DIR" -type f -perm +111 -name "$APP_BASE_NAME" 2>/dev/null | head -n 1)
     if [ -z "$EXECUTABLE" ]; then
-        # Fallback: try to find any executable in the app bundle
-        EXECUTABLE=$(find "$TARGET_DIR" -type f -perm +111 2>/dev/null | grep -v ".app/" | head -n 1)
+        # Fallback: try to find any executable in the app bundle root
+        EXECUTABLE=$(find "$TARGET_DIR" -maxdepth 1 -type f -perm +111 2>/dev/null | head -n 1)
     fi
     if [ -n "$EXECUTABLE" ] && [ -f "$EXECUTABLE" ]; then
         ldid -S "$EXECUTABLE" 2>/dev/null || echo "Warning: ldid signing failed"

@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# i2d: IPA to DEB Converter (Fixed Icons for Web)
+# i2d: IPA to DEB Converter (Final Fix)
 set -e
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
+YELLOW='\033[0;33m'
 NC='\033[0m'
 
 if [ $# -lt 1 ]; then
@@ -54,32 +55,35 @@ DEB_DIR="$TEMP_DIR/deb"
 mkdir -p "$DEB_DIR/DEBIAN" "$DEB_DIR/Applications"
 cp -r "$APP_BUNDLE" "$DEB_DIR/Applications/"
 
-# --- ФИКС ИКОНКИ ДЛЯ САЙТА ---
+# --- РАБОТА С ИКОНКОЙ ---
 mkdir -p ./icons
-# Ищем самую большую иконку
+
+# Ищем иконку в приложении
 ICON_FILE=$(find "$APP_BUNDLE" -maxdepth 1 -name "*120x120*" -o -name "*60x60@2x.png" -o -name "*AppIcon*" | head -n 1)
 
+ICON_LINE=""
 if [ -n "$ICON_FILE" ]; then
-    # Используем Python + Pillow (если есть) для де-оптимизации иконки
-    # Если Pillow нет, скрипт просто скопирует как есть (но на сайте может не открыться)
-    python3 - << PY
-import os
-from PIL import Image
-try:
-    img = Image.open("$ICON_FILE")
-    img.save("./icons/$BUNDLE_ID.png", "PNG")
-except Exception as e:
-    import shutil
-    shutil.copy("$ICON_FILE", "./icons/$BUNDLE_ID.png")
-PY
-    ICON_FIELD="Icon: icons/$BUNDLE_ID.png"
-    # Также копируем иконку внутрь DEB для Sileo
+    # Сначала копируем иконку как есть
+    cp "$ICON_FILE" "./icons/$BUNDLE_ID.png"
+    echo -e "${GREEN}[ICON]${NC} Иконка скопирована: icons/$BUNDLE_ID.png"
+
+    # Пытаемся исправить иконку (если не получится - оставляем как есть)
+    REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+    if python3 "$REPO_ROOT/fix_icons.py" "./icons/$BUNDLE_ID.png" "./icons/${BUNDLE_ID}_fixed.png" >/dev/null 2>&1; then
+        # Если фикс удался - заменяем оригинал
+        mv "./icons/${BUNDLE_ID}_fixed.png" "./icons/$BUNDLE_ID.png"
+        echo -e "${GREEN}[ICON]${NC} Иконка исправлена"
+        ICON_LINE="Icon: icons/$BUNDLE_ID.png"
+    else
+        echo -e "${YELLOW}[ICON]${NC} Фикс не удался, используем оригинал"
+        ICON_LINE="Icon: icons/$BUNDLE_ID.png"
+    fi
+
+    # Копируем в DEB для Sileo
     cp "./icons/$BUNDLE_ID.png" "$DEB_DIR/icon.png"
-else
-    ICON_FIELD=""
 fi
 
-# Создание control
+# Создание control (без лишних пустых строк)
 cat > "$DEB_DIR/DEBIAN/control" << EOF
 Package: $BUNDLE_ID
 Name: $DISPLAY_NAME
@@ -88,9 +92,13 @@ Architecture: iphoneos-arm
 Description: Мин. ОС: $MIN_OS. Авто-конверт i2d.
 Maintainer: slutvibe <alexa.chern22@gmail.com>
 Section: $SECTION
-$ICON_FIELD
 Depends: firmware (>= 7.0), ldid
 EOF
+
+# Добавляем строку иконки только если она есть
+if [ -n "$ICON_LINE" ]; then
+    echo "$ICON_LINE" >> "$DEB_DIR/DEBIAN/control"
+fi
 
 # Создание postinst
 cat > "$DEB_DIR/DEBIAN/postinst" << EOF
@@ -108,4 +116,4 @@ EOF
 chmod 755 "$DEB_DIR/DEBIAN/postinst"
 
 dpkg-deb -Zgzip -b "$DEB_DIR" "$OUTPUT_DEB"
-echo -e "${GREEN}[DONE]${NC} $OUTPUT_DEB | Иконка исправлена и сохранена в icons/$BUNDLE_ID.png"
+echo -e "${GREEN}[DONE]${NC} Пакет собран: $OUTPUT_DEB"

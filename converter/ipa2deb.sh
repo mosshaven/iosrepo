@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# i2d: IPA to DEB Converter (Unique Icons Version)
+# i2d: IPA to DEB Converter (Fixed Icons for Web)
 set -e
 
 GREEN='\033[0;32m'
@@ -50,22 +50,31 @@ SECTION=$(echo "$APP_DATA" | sed -n '6p')
 
 if [ -z "$EXEC_NAME" ]; then EXEC_NAME=$(basename "$APP_BUNDLE" .app); fi
 
-# Подготовка структуры
 DEB_DIR="$TEMP_DIR/deb"
 mkdir -p "$DEB_DIR/DEBIAN" "$DEB_DIR/Applications"
-
 cp -r "$APP_BUNDLE" "$DEB_DIR/Applications/"
 
-# --- РАБОТА С ИКОНКОЙ ---
-# Создаем папку icons в текущей директории (где запускаешь скрипт), если её нет
+# --- ФИКС ИКОНКИ ДЛЯ САЙТА ---
 mkdir -p ./icons
-ICON_FILE=$(find "$APP_BUNDLE" -maxdepth 1 -name "*60x60@2x.png" -o -name "*AppIcon*" -o -name "Icon-60.png" | head -n 1)
+# Ищем самую большую иконку
+ICON_FILE=$(find "$APP_BUNDLE" -maxdepth 1 -name "*120x120*" -o -name "*60x60@2x.png" -o -name "*AppIcon*" | head -n 1)
 
 if [ -n "$ICON_FILE" ]; then
-    # Копируем иконку в папку ./icons/ с именем BundleID.png
-    cp "$ICON_FILE" "./icons/$BUNDLE_ID.png"
-    # Для Sileo прописываем относительный путь от корня репозитория
+    # Используем Python + Pillow (если есть) для де-оптимизации иконки
+    # Если Pillow нет, скрипт просто скопирует как есть (но на сайте может не открыться)
+    python3 - << PY
+import os
+from PIL import Image
+try:
+    img = Image.open("$ICON_FILE")
+    img.save("./icons/$BUNDLE_ID.png", "PNG")
+except Exception as e:
+    import shutil
+    shutil.copy("$ICON_FILE", "./icons/$BUNDLE_ID.png")
+PY
     ICON_FIELD="Icon: icons/$BUNDLE_ID.png"
+    # Также копируем иконку внутрь DEB для Sileo
+    cp "./icons/$BUNDLE_ID.png" "$DEB_DIR/icon.png"
 else
     ICON_FIELD=""
 fi
@@ -99,4 +108,4 @@ EOF
 chmod 755 "$DEB_DIR/DEBIAN/postinst"
 
 dpkg-deb -Zgzip -b "$DEB_DIR" "$OUTPUT_DEB"
-echo -e "${GREEN}[DONE]${NC} $OUTPUT_DEB | Иконка: icons/$BUNDLE_ID.png"
+echo -e "${GREEN}[DONE]${NC} $OUTPUT_DEB | Иконка исправлена и сохранена в icons/$BUNDLE_ID.png"

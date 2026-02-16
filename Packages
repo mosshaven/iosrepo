@@ -25,10 +25,10 @@ Architecture: iphoneos-arm
 Maintainer: Auto IPA Converter
 Depends: firmware (>= 1.0), ldid
 Filename: debs/JobSimulatorGame2017.deb
-Size: 32583916
-MD5sum: 59427923cf0ecc9d403376e6a83a8f60
-SHA1: f828af076989f12f66e1e32aac5b22223d3e80b2
-SHA256: dfdc9f20aff1af37f57ec1321fdae6bb35fa4f6bca86d73fad042af17688d9e0
+Size: 32584180
+MD5sum: 9110e7dbed6c3724075334dc99566453
+SHA1: ea1d7fba7ed737b22f5c8800d576523ad69d8fbd
+SHA256: 4b5ba00e640e8eda13ace1ac661c0ff474a1bdde69d9d9c79d509a6d4542b57c
 Section: App
 Description: Autoconverted from IPA
 Name: Job Sim
@@ -39,10 +39,10 @@ Architecture: iphoneos-arm
 Maintainer: Auto IPA Converter
 Depends: firmware (>= 1.0), ldid
 Filename: debs/Slide_2.2.5.deb
-Size: 8266298
-MD5sum: 535d6c800f140b89229d9be9fdc32453
-SHA1: 58b5d9819ceff76acf12eaa35c8b033192339a19
-SHA256: a9eae920234531451be66d0985e57932cfa1d4b619a537030a72dfdfcf8a9f02
+Size: 8266574
+MD5sum: dfd1eb3e35280b03f8ad3c2baad79774
+SHA1: 1350ff19da5b17741be10a46637cfc9d2250911d
+SHA256: c9cdd9eb978c3c71bf7ca1ec13feee636fef0d11430fd362fcac29f0b8b7b1e5
 Section: App
 Description: Autoconverted from IPA
 Name: Slide
@@ -69,10 +69,10 @@ Architecture: iphoneos-arm
 Maintainer: Auto IPA Converter
 Depends: firmware (>= 1.0), ldid
 Filename: debs/org.amnezia.awg-2.0.0-eeveedecrypter.deb
-Size: 12544850
-MD5sum: 101006cb52231b2a6f0c6e680687b156
-SHA1: 202e65ac8e907f572744a17631304d6a8a72b58a
-SHA256: 8dc7b66cf819ac81c75e6f4d255b03a2a65ead8b9af23ba09638bcab0dc32049
+Size: 12545114
+MD5sum: 893eb2bd09950785084cb5a06fd8b84c
+SHA1: 502aaacef474e9f7ddf7af1add6512116111d230
+SHA256: 798cfb4077f54fa2d591dacfd80dc5be86eb7486fa53681718364db68d98b3a7
 Section: App
 Description: Autoconverted from IPA
 Name: AmneziaWG

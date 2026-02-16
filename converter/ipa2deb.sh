@@ -1,266 +1,167 @@
 #!/bin/bash
 
-# Конвертер IPA в DEB для iOS
-# Использование: ./ipa2deb.sh <входной.ipa> [выходной.deb]
-
+# Конвертер IPA в DEB (FIXED VERSION)
 set -e
 
-# Цвета для вывода
+# Цвета
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Функция для цветного вывода статуса
-print_status() {
-    echo -e "${GREEN}[INFO]${NC} $1"
-}
+print_status() { echo -e "${GREEN}[INFO]${NC} $1"; }
+print_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
-print_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
-
-print_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
-
-# Проверка наличия входного файла
 if [ $# -lt 1 ]; then
     echo "Usage: $0 <input.ipa> [output.deb]"
-    echo "Example: $0 app.ipa app.deb"
     exit 1
 fi
 
 INPUT_IPA="$1"
 OUTPUT_DEB="${2:-$(basename "$INPUT_IPA" .ipa).deb}"
 
-# Проверка существования файла
 if [ ! -f "$INPUT_IPA" ]; then
-    print_error "Input file '$INPUT_IPA' not found!"
+    print_error "Input file not found!"
     exit 1
 fi
 
-# Проверка расширения файла
-if [[ ! "$INPUT_IPA" =~ \.ipa$ ]]; then
-    print_error "Input file must have .ipa extension!"
-    exit 1
-fi
-
-print_status "Starting conversion: $INPUT_IPA -> $OUTPUT_DEB"
-
-# Создание временной директории
 TEMP_DIR=$(mktemp -d)
 trap "rm -rf $TEMP_DIR" EXIT
 
-print_status "Created temporary directory: $TEMP_DIR"
-
-# Распаковка IPA архива
-print_status "Extracting IPA file..."
+print_status "Extracting IPA..."
 unzip -q "$INPUT_IPA" -d "$TEMP_DIR"
 
-# Поиск директории Payload
 PAYLOAD_DIR="$TEMP_DIR/Payload"
-if [ ! -d "$PAYLOAD_DIR" ]; then
-    print_error "Payload directory not found in IPA file!"
-    exit 1
-fi
-
-# Получение app бандла
 APP_BUNDLE=$(find "$PAYLOAD_DIR" -name "*.app" -type d | head -n 1)
+
 if [ -z "$APP_BUNDLE" ]; then
-    print_error "No .app bundle found in Payload!"
+    print_error "No .app bundle found!"
     exit 1
 fi
 
-APP_NAME=$(basename "$APP_BUNDLE")
-print_status "Found app bundle: $APP_NAME"
-
-# Чтение метаданных из Info.plist (поддержка бинарного plist)
+APP_DIR_NAME=$(basename "$APP_BUNDLE")
 INFO_PLIST="$APP_BUNDLE/Info.plist"
-if [ ! -f "$INFO_PLIST" ]; then
-    print_warning "Info.plist not found inside app bundle; using fallback metadata"
-fi
-
 export INFO_PLIST
 
+# --- СБОР ИНФОРМАЦИИ ЧЕРЕЗ PYTHON ---
+
+# 1. Bundle ID
 BUNDLE_ID=$(python3 - << 'PY'
 import os, plistlib, sys
-p = os.environ.get('INFO_PLIST')
-if not p or not os.path.exists(p):
-    print('')
-    sys.exit(0)
-with open(p, 'rb') as f:
-    pl = plistlib.load(f)
-print(pl.get('CFBundleIdentifier','') or '')
+try:
+    with open(os.environ['INFO_PLIST'], 'rb') as f:
+        pl = plistlib.load(f)
+    print(pl.get('CFBundleIdentifier', 'com.unknown.app'))
+except: print('com.unknown.app')
 PY
 )
 
+# 2. Display Name
 DISPLAY_NAME=$(python3 - << 'PY'
-import os, plistlib, sys
-p = os.environ.get('INFO_PLIST')
-if not p or not os.path.exists(p):
-    print('')
-    sys.exit(0)
-with open(p, 'rb') as f:
-    pl = plistlib.load(f)
-print(pl.get('CFBundleDisplayName') or pl.get('CFBundleName') or '')
+import os, plistlib
+try:
+    with open(os.environ['INFO_PLIST'], 'rb') as f:
+        pl = plistlib.load(f)
+    print(pl.get('CFBundleDisplayName') or pl.get('CFBundleName') or 'Unknown')
+except: print('Unknown')
 PY
 )
 
+# 3. Version
 APP_VERSION=$(python3 - << 'PY'
-import os, plistlib, sys
-p = os.environ.get('INFO_PLIST')
-if not p or not os.path.exists(p):
-    print('')
-    sys.exit(0)
-with open(p, 'rb') as f:
-    pl = plistlib.load(f)
-print(pl.get('CFBundleShortVersionString') or pl.get('CFBundleVersion') or '')
+import os, plistlib
+try:
+    with open(os.environ['INFO_PLIST'], 'rb') as f:
+        pl = plistlib.load(f)
+    print(pl.get('CFBundleShortVersionString') or pl.get('CFBundleVersion') or '1.0')
+except: print('1.0')
 PY
 )
 
-# Извлечение минимальной версии iOS из Info.plist
-MIN_OS_VERSION=$(python3 - << 'PY'
-import os, plistlib, sys
-p = os.environ.get('INFO_PLIST')
-if not p or not os.path.exists(p):
-    print('')
-    sys.exit(0)
-with open(p, 'rb') as f:
-    pl = plistlib.load(f)
-min_os = pl.get('MinimumOSVersion', '')
-if min_os:
-    # Extract major version number (e.g., "15.0" -> "15")
-    print(min_os.split('.')[0])
-else:
-    print('')
+# 4. Executable Name (САМОЕ ВАЖНОЕ!)
+EXECUTABLE_NAME=$(python3 - << 'PY'
+import os, plistlib
+try:
+    with open(os.environ['INFO_PLIST'], 'rb') as f:
+        pl = plistlib.load(f)
+    print(pl.get('CFBundleExecutable', ''))
+except: print('')
 PY
 )
 
-# Проверка версии iOS - пропуск если выше 12
-if [ -n "$MIN_OS_VERSION" ] && [ "$MIN_OS_VERSION" -gt 12 ]; then
-    print_error "App requires iOS $MIN_OS_VERSION+ but this repo only supports iOS 12 and below. Skipping conversion."
-    rm -rf "$TEMP_DIR"
-    exit 1
+if [ -z "$EXECUTABLE_NAME" ]; then
+    # Если в plist нет имени, берем имя папки без .app
+    EXECUTABLE_NAME=$(echo "$APP_DIR_NAME" | sed 's/\.app$//')
 fi
 
-APP_BASE_NAME=$(echo "$APP_NAME" | sed 's/\.app$//')
-if [ -z "$DISPLAY_NAME" ]; then
-    DISPLAY_NAME="$APP_BASE_NAME"
-fi
-if [ -z "$BUNDLE_ID" ]; then
-    # Fallback if bundle id is missing
-    BUNDLE_ID="com.converted.$(echo "$APP_BASE_NAME" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9.-')"
-fi
-if [ -z "$APP_VERSION" ]; then
-    APP_VERSION="1.0"
-fi
+print_status "App: $DISPLAY_NAME ($BUNDLE_ID)"
+print_status "Executable binary: $EXECUTABLE_NAME"
 
-# Создание структуры DEB пакета
+# --- СБОРКА ПАКЕТА ---
+
+# Создаем правильную структуру сразу для /Applications
 DEB_DIR="$TEMP_DIR/deb"
 mkdir -p "$DEB_DIR/DEBIAN"
-mkdir -p "$DEB_DIR/var/mobile/Documents"
+mkdir -p "$DEB_DIR/Applications"
 
-# Копирование бандла в директорию пакета
-print_status "Copying app bundle..."
-cp -r "$APP_BUNDLE" "$DEB_DIR/var/mobile/Documents/"
+# Копируем .app сразу в Applications
+cp -r "$APP_BUNDLE" "$DEB_DIR/Applications/"
 
-# Создание control файла
-print_status "Creating control file..."
+# Создаем control
 cat > "$DEB_DIR/DEBIAN/control" << EOF
 Package: $BUNDLE_ID
 Name: $DISPLAY_NAME
 Version: $APP_VERSION
 Architecture: iphoneos-arm
-Description: Автоматически сконвертировано из IPA. Требуется iOS 12 или ниже.
+Description: Converted from IPA via script.
 Maintainer: slutvibe <alexa.chern22@gmail.com>
-Section: App
-Depends: firmware (>= 1.0), firmware (<< 13.0), ldid
+Section: Games
+Depends: firmware (>= 1.0), ldid
 EOF
 
-# Создание postinst скрипта для установки
-cat > "$DEB_DIR/DEBIAN/postinst" << 'EOF'
+# --- СОЗДАНИЕ POSTINST ---
+# Важно: Мы используем EOF без кавычек, чтобы подставить переменные BASH сейчас,
+# но экранируем \$ для переменных, которые должны работать внутри iOS.
+
+cat > "$DEB_DIR/DEBIAN/postinst" << EOF
 #!/bin/bash
 
-# Проверка версии iOS - установка только на iOS 12 и ниже
-IOS_VERSION=$(defaults read /System/Library/CoreServices/SystemVersion.plist ProductVersion 2>/dev/null | cut -d'.' -f1)
-if [ -n "$IOS_VERSION" ] && [ "$IOS_VERSION" -gt 12 ]; then
-    echo "Error: This app is only compatible with iOS 12 and below. Current iOS version: $IOS_VERSION"
-    exit 1
-fi
+APP_PATH="/Applications/$APP_DIR_NAME"
+BIN_PATH="/Applications/$APP_DIR_NAME/$EXECUTABLE_NAME"
 
-# Поиск приложения в Documents и перенос в Applications
-APP_DIR=$(find /var/mobile/Documents -name "*.app" -type d | head -n 1)
+echo "Setting permissions for $DISPLAY_NAME..."
 
-if [ -n "$APP_DIR" ]; then
-    APP_NAME=$(basename "$APP_DIR")
+# 1. Исправляем владельца
+chown -R root:wheel "\$APP_PATH"
+
+# 2. Делаем бинарник исполняемым (ЭТОГО НЕ ХВАТАЛО)
+if [ -f "\$BIN_PATH" ]; then
+    chmod 755 "\$BIN_PATH"
+    echo "Signing binary: \$BIN_PATH"
     
-    # Создание директории Applications
-    mkdir -p /Applications
-    
-    # Перенос приложения
-    TARGET_DIR="/Applications/$APP_NAME"
-    
-    # Move app
-    mv "$APP_DIR" "$TARGET_DIR"
-    
-    # Установка прав доступа
-    chown -R root:wheel "$TARGET_DIR"
-    chmod -R 755 "$TARGET_DIR"
-    
-    # Sign the app executable with ldid (find it dynamically)
-    EXECUTABLE=$(find "$TARGET_DIR" -type f -perm +111 -name "$APP_BASE_NAME" 2>/dev/null | head -n 1)
-    if [ -z "$EXECUTABLE" ]; then
-        # Fallback: try to find any executable in the app bundle root
-        EXECUTABLE=$(find "$TARGET_DIR" -maxdepth 1 -type f -perm +111 2>/dev/null | head -n 1)
-    fi
-    if [ -n "$EXECUTABLE" ] && [ -f "$EXECUTABLE" ]; then
-        ldid -S "$EXECUTABLE" 2>/dev/null || echo "Warning: ldid signing failed"
-    else
-        echo "Warning: No executable found to sign in $TARGET_DIR"
-    fi
-    
-    # Обновление кэша иконок и респринг
-    uicache -p "$TARGET_DIR" 2>/dev/null || true
-    killall SpringBoard 2>/dev/null || true
-    
-    echo "App installed successfully!"
+    # 3. Подписываем ldid
+    ldid -S "\$BIN_PATH" 2>/dev/null || echo "Warning: ldid failed or not found"
 else
-    echo "No app bundle found!"
+    echo "Error: Binary not found at \$BIN_PATH"
 fi
+
+# 4. Обновляем иконки
+uicache -p "\$APP_PATH"
+exit 0
 EOF
 
-chmod +x "$DEB_DIR/DEBIAN/postinst"
+chmod 755 "$DEB_DIR/DEBIAN/postinst"
 
-# Создание prerm скрипта для удаления
-cat > "$DEB_DIR/DEBIAN/prerm" << 'EOF'
+# --- СОЗДАНИЕ PRERM ---
+cat > "$DEB_DIR/DEBIAN/prerm" << EOF
 #!/bin/bash
-
-# Поиск и удаление приложения из /Applications
-APP_DIR=$(find /Applications -name "*.app" -type d 2>/dev/null | head -n 1)
-
-if [ -n "$APP_DIR" ]; then
-    # Очистка кэша иконок перед удалением
-    uicache -u "$APP_DIR" 2>/dev/null || true
-    rm -rf "$APP_DIR"
-    echo "App removed successfully!"
-fi
+# Ничего удалять не надо, dpkg сам удалит папку /Applications/$APP_DIR_NAME
+# Нам нужно только почистить кэш
+exit 0
 EOF
+chmod 755 "$DEB_DIR/DEBIAN/prerm"
 
-chmod +x "$DEB_DIR/DEBIAN/prerm"
-
-# Сборка DEB пакета
-print_status "Building DEB package..."
+# Сборка
+print_status "Building DEB..."
 dpkg-deb -Zgzip -b "$DEB_DIR" "$OUTPUT_DEB"
 
-# Проверка успешности сборки
-if [ -f "$OUTPUT_DEB" ]; then
-    SIZE=$(du -h "$OUTPUT_DEB" | cut -f1)
-    print_status "Conversion completed successfully!"
-    print_status "Output: $OUTPUT_DEB (Size: $SIZE)"
-else
-    print_error "Failed to create DEB package!"
-    exit 1
-fi
-
-print_status "Done! You can now install the DEB package on your iOS device."
+print_status "Done: $OUTPUT_DEB"

@@ -172,7 +172,7 @@ Package: $BUNDLE_ID
 Name: $DISPLAY_NAME
 Version: $APP_VERSION
 Architecture: iphoneos-arm
-Description: Autoconverted from IPA. Requires iOS 12 or below.
+Description: Автоматически сконвертировано из IPA. Требуется iOS 12 или ниже.
 Maintainer: slutvibe <alexa.chern22@gmail.com>
 Section: App
 Depends: firmware (>= 1.0), firmware (<< 13.0), ldid

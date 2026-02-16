@@ -25,12 +25,12 @@ Architecture: iphoneos-arm
 Maintainer: slutvibe <alexa.chern22@gmail.com>
 Depends: firmware (>= 1.0), firmware (<< 13.0), ldid
 Filename: debs/JobSimulatorGame2017.deb
-Size: 32584462
-MD5sum: b5925d8c43fe3468f8743fe38c7c1e8f
-SHA1: 929031907079c5a80a2e9311cde0f2683a42aedf
-SHA256: 4a3e9c60c2e6f4a8734993f656962b98723b508e11951cc645a7162054a9e73d
+Size: 32584516
+MD5sum: 67b42598a93f3f6d0f4bfd270f3583d2
+SHA1: a3109d1343d0fc98282b0f58f84edaa1efe4a775
+SHA256: a239f6b1defd894dba0216d66d4474e1ed5d1c36b4116e237c78bfbb285c3e77
 Section: App
-Description: Autoconverted from IPA. Requires iOS 12 or below.
+Description: Автоматически сконвертировано из IPA. Требуется iOS 12 или ниже.
 Name: Job Sim
 
 Package: com.thefalcoinitiative.slidetounlock
@@ -39,12 +39,12 @@ Architecture: iphoneos-arm
 Maintainer: slutvibe <alexa.chern22@gmail.com>
 Depends: firmware (>= 1.0), firmware (<< 13.0), ldid
 Filename: debs/Slide_2.2.5.deb
-Size: 8266846
-MD5sum: d6cc9abf28d43f2355ec091b02186f00
-SHA1: f2e173aa6aeee533a0d1b7fe03935ff6617b07ff
-SHA256: a0ec412e4201442715754d9399e8fe09135defd118f02233f8d68a18b98ae6a5
+Size: 8266880
+MD5sum: adf881b381492a8bee98d389846cbd5e
+SHA1: 7d2c386d04567129ff89d95267892eff39aa1bb0
+SHA256: c110415f91b2653ef90365ceaecb88720227a114596f44ac9c094cf947a8ef7f
 Section: App
-Description: Autoconverted from IPA. Requires iOS 12 or below.
+Description: Автоматически сконвертировано из IPA. Требуется iOS 12 или ниже.
 Name: Slide
 
 Package: ldid

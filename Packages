@@ -19,17 +19,45 @@ Author: Karen/あけみ, Linus Yang <karen@akemi.ai>
 Depiction: https://cydia.akemi.ai/?page/ai.akemi.appsyncunified
 Name: AppSync Unified
 
-Package: com.slut.jobsim
+Package: amneziawg
 Version: 1.0
 Architecture: iphoneos-arm
-Maintainer: slut <alexa.chern22@gmail.com>
-Filename: debs/JobSimulator.deb
-Size: 26045680
-MD5sum: 17216d6c0cfdceeef560871bef8d328e
-SHA1: d41a4b236e2652134fb5bdb0e6806c4ad9fbe616
-SHA256: e1a12bf2921c74ca27ebcf5330b576628b3b855f397885f476959a7d1eb750db
-Section: Games
-Description: idk what is this
-Author: @slutvibe
-Name: Job Simulator 2017
+Maintainer: IPA2DEB Converter
+Depends: firmware (>= 1.0)
+Filename: debs/org.amnezia.awg-2.0.0-eeveedecrypter.deb
+Size: 9620646
+MD5sum: 259b448587e6d36d2b39f9e606a901f8
+SHA1: be3f1ca21beab754ebed51fcb3c12acebe0e6dd6
+SHA256: 5b95c04c5206164d69e6ba198542684ad0d2c7b2cd8cee1263d74666352eb2bf
+Section: Utilities
+Description: Converted from input/org.amnezia.awg-2.0.0-eeveedecrypter.ipa
+Name: AmneziaWG.app
+
+Package: productname
+Version: 1.0
+Architecture: iphoneos-arm
+Maintainer: IPA2DEB Converter
+Depends: firmware (>= 1.0)
+Filename: debs/JobSimulatorGame2017.deb
+Size: 26047988
+MD5sum: 37f390f8ea32e9d4d6eabd5d8fec6a7d
+SHA1: d5a8b7605525e645a5c6f3a036ec99112829ad1d
+SHA256: de118fb45dc8927e550671873ce8acf06d3a4073f86443047401067aea72087f
+Section: Utilities
+Description: Converted from input/JobSimulatorGame2017.ipa
+Name: ProductName.app
+
+Package: slide
+Version: 1.0
+Architecture: iphoneos-arm
+Maintainer: IPA2DEB Converter
+Depends: firmware (>= 1.0)
+Filename: debs/Slide_2.2.5.deb
+Size: 7397714
+MD5sum: cc512b8100de4ddea49a5e80b80b0ea3
+SHA1: 8c49ab3b7a5478f6453bdb710d1010f56c5fbe03
+SHA256: dd033c8225187dd4053d9aae4ba9ed99dc2d570336313023b5d6d4c8add7a215
+Section: Utilities
+Description: Converted from input/Slide_2.2.5.ipa
+Name: Slide.app
 

@@ -1,2 +1,4 @@
 input/
 *.processed
+__pycache__/
+*.pyc

@@ -1,13 +1,12 @@
-#!/bin/bash
-# Удаляем старые индексы
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")"
 rm -f Packages Packages.bz2 Packages.gz
 
-# Генерируем новый Packages
-# Флаг -m заставляет искать во вложенных папках
 dpkg-scanpackages -m debs /dev/null > Packages
-
-# Сжимаем
+python3 repo_metadata.py Packages
 bzip2 -c9 Packages > Packages.bz2
-gzip -c9 Packages > Packages.gz
+gzip -cn9 Packages > Packages.gz
 
-echo "Done! Repositories updated."
+printf 'Repository updated: %s packages\n' "$(grep -c '^Package:' Packages)"

@@ -19,7 +19,6 @@ Author: Karen/あけみ, Linus Yang <karen@akemi.ai>
 Depiction: https://ios.slutvibe.site/depictions/appsync.html
 Name: AppSync Unified
 Icon: https://ios.slutvibe.site/icons/ai.akemi.appsyncunified.png
-Tag: compatible_min::5.0, compatible_max::18.2
 
 Package: ldid
 Version: 2.1.5-procursus7
@@ -39,4 +38,3 @@ Author: Jay Freeman (saurik) <saurik@saurik.com>
 Name: ldid
 Depiction: https://ios.slutvibe.site/depictions/ldid.html
 Icon: https://ios.slutvibe.site/CydiaIcon.png
-Tag: compatible_min::14.0

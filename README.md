@@ -29,8 +29,9 @@ file extracted/path/to/binary
 llvm-objdump --macho --private-headers extracted/path/to/binary
 ```
 
-`Tag: compatible_min` helps package-manager presentation. Actual installation
-constraints belong in package `Depends`, such as `firmware (>= 8.0)`.
+Installation constraints belong in package `Depends`, such as
+`firmware (>= 8.0)`. Avoid nonstandard compatibility tags: old Cydia versions
+may filter packages carrying tags intended for newer package managers.
 
 ## Generate indexes
 

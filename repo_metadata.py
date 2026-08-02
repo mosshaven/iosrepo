@@ -10,13 +10,11 @@ OVERRIDES = {
     "ai.akemi.appsyncunified": {
         "Depiction": f"{REPO_URL}/depictions/appsync.html",
         "Icon": f"{REPO_URL}/icons/ai.akemi.appsyncunified.png",
-        "Tag": "compatible_min::5.0, compatible_max::18.2",
     },
     "ldid": {
         "Name": "ldid",
         "Depiction": f"{REPO_URL}/depictions/ldid.html",
         "Icon": f"{REPO_URL}/CydiaIcon.png",
-        "Tag": "compatible_min::14.0",
     },
 }
 

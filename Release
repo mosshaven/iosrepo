@@ -6,3 +6,16 @@ Codename: ios
 Architectures: iphoneos-arm
 Components: main
 Description: Curated packages for jailbroken iOS devices.
+Date: Mon, 03 Aug 2026 11:43:44 UTC
+MD5Sum:
+ 77fd33da33e480ed705bd61dde2da1a6 2382 Packages
+ 0a8ea833bb4d7abbae8e568273ffbcac 1138 Packages.gz
+ f70cc6268c138ae28fec5dcd523c3ee4 1259 Packages.bz2
+SHA1:
+ efe0c0c9d93b301dcd710e58671f76775c7e9cfa 2382 Packages
+ 1c679718dbc3b8f6e6918db11b9c24847ce273a5 1138 Packages.gz
+ 4da75ef528ce3e374a206cb962c1da8e824f248a 1259 Packages.bz2
+SHA256:
+ eb84cd900eb18ac679317ca6621d7deb0fb75026a9914516579d74f506d62ede 2382 Packages
+ f8dd083d45a0a98eb15a5c7e19cc4cbc591f03ce7b68424a5b9dec3380558dd7 1138 Packages.gz
+ 3c6820131c6a7c2019042ea39d75f2beeb705eaf74637fcbe9cea1ccd3c71e17 1259 Packages.bz2

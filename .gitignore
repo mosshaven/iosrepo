@@ -2,3 +2,5 @@ input/
 *.processed
 __pycache__/
 *.pyc
+bot/.env
+bot/slutvibe_repo_bot.session

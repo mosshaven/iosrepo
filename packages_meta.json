@@ -1,0 +1,8 @@
+{
+  "ai.akemi.appsyncunified": {
+    "Tags": ["iOS 5.0\u201318.2", "32/64-bit"]
+  },
+  "ldid": {
+    "Tags": ["iOS 14+", "ARM64"]
+  }
+}
